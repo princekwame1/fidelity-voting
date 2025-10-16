@@ -29,9 +29,9 @@
         </div>
 
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="login">
-                <span wire:loading.remove wire:target="login">Sign In</span>
-                <span wire:loading wire:target="login" class="d-flex align-items-center justify-content-center">
+            <button type="submit" class="btn btn-primary" x-data="{ loading: false }" x-on:click="loading = true" :disabled="loading">
+                <span x-show="!loading">Sign In</span>
+                <span x-show="loading" class="d-flex align-items-center justify-content-center">
                     <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Signing in...
                 </span>
