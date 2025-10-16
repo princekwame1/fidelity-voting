@@ -46,6 +46,13 @@
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             text-align: center;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(242, 123, 51, 0.15);
         }
         .stat-number {
             font-size: 2.5em;
@@ -67,6 +74,24 @@
             padding: 25px;
             min-height: 400px;
             border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(242, 123, 51, 0.05), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .chart-section:hover::before {
+            left: 100%;
         }
 
         .chart-section:last-child {
@@ -92,6 +117,15 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .update-indicator.updating {
+            background: linear-gradient(135deg, #f27b33, #f5b361);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(242, 123, 51, 0.3);
         }
         .pulse {
             width: 10px;
@@ -99,6 +133,28 @@
             background: #10b981;
             border-radius: 50%;
             animation: pulse 2s infinite;
+            position: relative;
+        }
+
+        .pulse::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            border-radius: 50%;
+            animation: ripple 2s infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
         }
         @keyframes pulse {
             0% { transform: scale(0.95); opacity: 1; }
@@ -169,6 +225,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            animation: fadeIn 0.5s ease-out;
         }
         
         /* Combined card for QR and charts */
@@ -178,6 +235,18 @@
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             margin-bottom: 30px;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* NEW: Content grid for side-by-side layout */
@@ -217,6 +286,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: slideUp 0.6s ease-out;
         }
 
         .rankings-table th {
@@ -235,12 +305,26 @@
         }
 
         .ranking-row {
-            transition: all 0.5s ease-in-out;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
         .ranking-row:hover {
-            background: #f8f9fa;
+            background: linear-gradient(90deg, #fff8f3 0%, #fef5ee 100%);
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(242, 123, 51, 0.1);
         }
 
         .rank-number {
@@ -256,11 +340,6 @@
             color: #333;
         }
 
-        .vote-count {
-            font-weight: bold;
-            color: #f27b33;
-            text-align: center;
-        }
 
         .percentage {
             color: #666;
@@ -283,6 +362,19 @@
             font-weight: bold;
             opacity: 0;
             transition: opacity 0.3s ease;
+            animation: bounceIn 0.5s ease-out;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: translateY(-50%) scale(0);
+            }
+            50% {
+                transform: translateY(-50%) scale(1.2);
+            }
+            100% {
+                transform: translateY(-50%) scale(1);
+            }
         }
 
         .rank-up {
@@ -295,6 +387,64 @@
 
         .rank-change.show {
             opacity: 1;
+        }
+
+        .vote-count {
+            font-weight: bold;
+            color: #f27b33;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .vote-count.updated {
+            animation: pulseNumber 0.6s ease;
+        }
+
+        @keyframes pulseNumber {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+                color: #10b981;
+            }
+            100% {
+                transform: scale(1);
+                color: #f27b33;
+            }
+        }
+
+        .chart-container canvas {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .data-update-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(242, 123, 51, 0.1), transparent);
+            pointer-events: none;
+            animation: flash 1s ease-out;
+        }
+
+        @keyframes flash {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
         }
         
         @media (max-width: 1024px) {
@@ -432,6 +582,7 @@
         const eventId = {{ $event->id }};
         const charts = {};
         let previousRankings = new Map(); // Track previous rankings for animations
+        let isFirstLoad = true; // Track first load to avoid initial animations
 
         // Chart colors - Primary and Secondary based
         const colors = [
@@ -441,12 +592,27 @@
 
         async function fetchResults() {
             try {
+                // Show updating indicator
+                const indicator = document.querySelector('.update-indicator');
+                if (indicator && !isFirstLoad) {
+                    indicator.classList.add('updating');
+                }
+
                 const response = await fetch(`/results/${eventId}/data`);
                 const data = await response.json();
                 console.log('Fetched results:', data);
                 updateCharts(data.results);
                 updateRankings(data.results);
                 lastUpdateTime = Date.now(); // Update the last update time
+
+                // Hide updating indicator after a short delay
+                if (indicator) {
+                    setTimeout(() => {
+                        indicator.classList.remove('updating');
+                    }, 500);
+                }
+
+                isFirstLoad = false;
             } catch (error) {
                 console.error('Error fetching results:', error);
             }
@@ -499,19 +665,34 @@
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
+                            interaction: {
+                                mode: 'index',
+                                intersect: false
+                            },
                             plugins: {
                                 legend: {
                                     display: false
                                 },
                                 tooltip: {
+                                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                                    titleColor: '#fff',
+                                    bodyColor: '#fff',
+                                    borderColor: '#f27b33',
+                                    borderWidth: 1,
+                                    cornerRadius: 8,
+                                    padding: 12,
+                                    displayColors: false,
                                     callbacks: {
                                         label: function(context) {
                                             const value = context.parsed.y;
                                             const percentage = question.options[context.dataIndex].percentage;
-                                            return `${value} votes (${percentage}%)`;
+                                            return [`Votes: ${value}`, `Percentage: ${percentage}%`];
                                         }
                                     }
                                 }
+                            },
+                            onHover: (event, activeElements) => {
+                                event.native.target.style.cursor = activeElements.length > 0 ? 'pointer' : 'default';
                             },
                             scales: {
                                 y: {
@@ -529,16 +710,34 @@
                                 }
                             },
                             animation: {
-                                duration: 1000,
-                                easing: 'easeInOutQuart'
+                                duration: 1500,
+                                easing: 'easeInOutCubic',
+                                animateRotate: true,
+                                animateScale: true
                             }
                         }
                     });
                 } else {
-                    // Update existing chart
+                    // Update existing chart with animation
                     const chart = charts[question.id];
+                    const oldData = [...chart.data.datasets[0].data];
+                    const newData = question.options.map(opt => opt.votes);
+
+                    // Check if data has changed
+                    const hasChanged = oldData.some((val, idx) => val !== newData[idx]);
+
+                    if (hasChanged) {
+                        // Add flash effect to chart container
+                        const container = chartCard.querySelector('.chart-container');
+                        const flash = document.createElement('div');
+                        flash.className = 'data-update-flash';
+                        container.style.position = 'relative';
+                        container.appendChild(flash);
+                        setTimeout(() => flash.remove(), 1000);
+                    }
+
                     chart.data.labels = question.options.map(opt => opt.text);
-                    chart.data.datasets[0].data = question.options.map(opt => opt.votes);
+                    chart.data.datasets[0].data = newData;
                     chart.update('active');
                 }
             });
@@ -609,10 +808,13 @@
                 let row = document.getElementById(`rank-row-${option.id}`);
 
                 if (!row) {
-                    // Create new row
+                    // Create new row with animation
                     row = document.createElement('tr');
                     row.className = 'ranking-row';
                     row.id = `rank-row-${option.id}`;
+                    if (!isFirstLoad) {
+                        row.style.animation = 'slideIn 0.5s ease-out';
+                    }
                     tbody.appendChild(row);
                 }
 
@@ -636,29 +838,54 @@
                     }, 3000);
                 }
 
+                // Check if votes changed
+                const currentVotes = row.querySelector('.vote-count')?.textContent;
+                const votesChanged = currentVotes && parseInt(currentVotes) !== option.votes;
+
                 row.innerHTML = `
                     <td class="rank-number">${rank}</td>
                     <td class="option-text" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${option.questionText}</td>
                     <td class="option-text">${option.optionText}</td>
-                    <td class="vote-count">${option.votes}</td>
+                    <td class="vote-count ${votesChanged ? 'updated' : ''}">${option.votes}</td>
                     <td class="percentage">${option.percentage}%</td>
                     ${rankChangeIndicator}
                 `;
+
+                // Remove the updated class after animation
+                if (votesChanged) {
+                    setTimeout(() => {
+                        const voteCell = row.querySelector('.vote-count');
+                        if (voteCell) voteCell.classList.remove('updated');
+                    }, 600);
+                }
 
                 // Animate row position changes
                 const targetIndex = index;
                 const currentIndex = Array.from(tbody.children).indexOf(row);
 
                 if (currentIndex !== targetIndex) {
-                    // Remove row from current position
-                    row.remove();
+                    // Animate row position change
+                    row.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
 
-                    // Insert at correct position
-                    if (targetIndex >= tbody.children.length) {
-                        tbody.appendChild(row);
-                    } else {
-                        tbody.insertBefore(row, tbody.children[targetIndex]);
-                    }
+                    // Add a slight scale effect during move
+                    row.style.transform = 'scale(1.02)';
+
+                    setTimeout(() => {
+                        // Remove row from current position
+                        row.remove();
+
+                        // Insert at correct position
+                        if (targetIndex >= tbody.children.length) {
+                            tbody.appendChild(row);
+                        } else {
+                            tbody.insertBefore(row, tbody.children[targetIndex]);
+                        }
+
+                        // Reset scale after move
+                        setTimeout(() => {
+                            row.style.transform = 'scale(1)';
+                        }, 50);
+                    }, 100);
                 }
             });
 
