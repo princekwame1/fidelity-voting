@@ -14,9 +14,9 @@ package-lock.json
 .env.example.local
 
 # Laravel Mix / Vite
-/public/hot
-/public/build
-/public/mix-manifest.json
+# /public/hot
+# /public/build
+# /public/mix-manifest.json
 
 # IDE & OS Files
 .idea/
