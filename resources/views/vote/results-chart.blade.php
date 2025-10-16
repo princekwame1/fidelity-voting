@@ -718,15 +718,12 @@
 
         <div class="header">
             <h1>{{ $event->name }}</h1>
-            @if($event->description)
-                <p>{{ $event->description }}</p>
-            @endif
         </div>
 
         <!-- Countdown Timer -->
         <div class="timer-container" id="timer-container">
             <div class="timer-header">
-                <h2 id="timer-status">Voting Ends In</h2>
+                <h2 id="timer-status">{{ $event->name }} - Voting Ends In</h2>
                 <p id="end-time-display">{{ \Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A') }}</p>
             </div>
             <div class="timer-display" id="timer-display">
@@ -1129,7 +1126,7 @@
                 // Voting has ended
                 clearInterval(timerInterval);
                 timerContainer.classList.add('timer-expired');
-                timerStatus.textContent = 'Voting Has Ended';
+                timerStatus.textContent = '{{ $event->name }} - Voting Has Ended';
                 document.getElementById('days').textContent = '0';
                 document.getElementById('hours').textContent = '0';
                 document.getElementById('minutes').textContent = '0';
@@ -1160,7 +1157,7 @@
             // Add warning class if less than 5 minutes remaining
             if (distance < 5 * 60 * 1000 && !timerContainer.classList.contains('timer-warning')) {
                 timerContainer.classList.add('timer-warning');
-                timerStatus.textContent = 'Voting Ending Soon!';
+                timerStatus.textContent = '{{ $event->name }} - Voting Ending Soon!';
             }
         }
 
@@ -1214,7 +1211,7 @@
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
 
                 timerContainer.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
-                timerStatus.textContent = 'Voting Starts In';
+                timerStatus.textContent = '{{ $event->name }} - Voting Starts In';
                 document.getElementById('end-time-display').textContent =
                     'Starts: {{ \Carbon\Carbon::parse($event->start_time)->format("F j, Y \\a\\t g:i A") }}';
 
@@ -1230,7 +1227,7 @@
                 if (checkVotingStatus()) {
                     clearInterval(statusInterval);
                     // Reset timer display for voting end
-                    document.getElementById('timer-status').textContent = 'Voting Ends In';
+                    document.getElementById('timer-status').textContent = '{{ $event->name }} - Voting Ends In';
                     document.getElementById('end-time-display').textContent =
                         '{{ \Carbon\Carbon::parse($event->end_time)->format("F j, Y \\a\\t g:i A") }}';
                     document.getElementById('timer-container').style.background =
