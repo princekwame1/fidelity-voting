@@ -998,7 +998,6 @@
                     <thead>
                         <tr>
                             <th style="width: 60px;">Rank</th>
-                            <th>Question</th>
                             <th>Option</th>
                             <th style="width: 80px; text-align: center;">Votes</th>
                             <th style="width: 80px; text-align: center;">%</th>
@@ -1060,7 +1059,6 @@
 
                 row.innerHTML = `
                     <td class="rank-number">${rank}</td>
-                    <td class="option-text" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${option.questionText}</td>
                     <td class="option-text">${option.optionText}</td>
                     <td class="vote-count ${votesChanged ? 'updated' : ''}">${option.votes}</td>
                     <td class="percentage">${option.percentage}%</td>
