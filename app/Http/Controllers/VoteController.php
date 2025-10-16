@@ -37,33 +37,14 @@ class VoteController extends Controller
             return view('vote.error', ['error' => $message]);
         }
 
-        $deviceHash = $this->fingerprintService->generateFingerprint($request);
         $strictDeviceHash = $this->fingerprintService->generateStrictFingerprint($request);
         $ipAddress = $request->ip();
 
-        // Check for suspicious activity
-        $suspicionCheck = $this->fingerprintService->isSuspiciousActivity($event->id, $request);
-        if ($suspicionCheck['is_suspicious'] && $suspicionCheck['risk_score'] >= 50) {
-            Log::warning('Suspicious voting attempt detected', [
-                'event_id' => $event->id,
-                'ip' => $ipAddress,
-                'reasons' => $suspicionCheck['reasons'],
-                'risk_score' => $suspicionCheck['risk_score']
-            ]);
+        // Skip suspicious activity check to allow multiple users from same IP
+        // We still prevent same device from voting twice below
 
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Access denied: ' . implode(', ', $suspicionCheck['reasons'])], 403);
-            }
-            return view('vote.error', ['error' => 'Access denied: Suspicious activity detected']);
-        }
-
-        // Check IP rate limiting
-        if (!$this->fingerprintService->checkRateLimit($event->id, $ipAddress)) {
-            if ($request->expectsJson()) {
-                return response()->json(['error' => 'Too many voting attempts from this network'], 429);
-            }
-            return view('vote.error', ['error' => 'Too many voting attempts from this network. Please try again later.']);
-        }
+        // Removed IP rate limiting to allow multiple users from same location
+        // Device-based checking is sufficient
 
         // Check if this device already has a session for this event
         $existingSession = VotingSession::where('event_id', $event->id)
@@ -91,11 +72,11 @@ class VoteController extends Controller
 
             $session = $existingSession;
         } else {
-            // Check if device already voted with different IP (link sharing prevention)
-            if ($this->fingerprintService->hasDeviceVoted($event->id, $deviceHash)) {
+            // Check if this specific device has voted (using strict fingerprint)
+            if ($this->fingerprintService->hasDeviceVoted($event->id, $strictDeviceHash)) {
                 Log::warning('Attempted vote from already voted device', [
                     'event_id' => $event->id,
-                    'device_hash' => $deviceHash,
+                    'device_hash' => $strictDeviceHash,
                     'ip' => $ipAddress
                 ]);
 
@@ -193,17 +174,8 @@ class VoteController extends Controller
             return response()->json(['error' => 'Device verification failed. Please vote from the original device.'], 403);
         }
 
-        // Check for suspicious activity again
-        $suspicionCheck = $this->fingerprintService->isSuspiciousActivity($event->id, $request);
-        if ($suspicionCheck['risk_score'] >= 75) {
-            Log::error('High-risk voting attempt blocked', [
-                'event_id' => $event->id,
-                'session_id' => $session->id,
-                'risk_score' => $suspicionCheck['risk_score'],
-                'reasons' => $suspicionCheck['reasons']
-            ]);
-            return response()->json(['error' => 'Security check failed'], 403);
-        }
+        // Removed secondary suspicious activity check
+        // Device fingerprint validation is sufficient
 
         return DB::transaction(function () use ($validated, $event, $session, $request) {
             $votesCreated = [];

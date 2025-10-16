@@ -31,10 +31,10 @@
         <div class="d-grid">
             <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
                 <span wire:loading.remove>Sign In</span>
-                {{-- <span wire:loading>
+                <span wire:loading>
                     <span class="spinner-border spinner-border-sm me-2 text-light" role="status" aria-hidden="true"></span>
                     Signing in...
-                </span> --}}
+                </span>
             </button>
         </div>
     </form>

@@ -76,10 +76,9 @@
         <div class="error-code">
             This could happen if:
             <ul style="text-align: left; margin: 10px 0; padding-left: 20px;">
-                <li>The QR code has already been used</li>
+                <li>You have already voted from this device</li>
                 <li>The voting period has ended</li>
-                <li>The QR code was opened on a different device</li>
-                <li>The QR code has expired (5 minutes after first scan)</li>
+                <li>Your voting session has expired</li>
                 <li>The QR code is invalid or corrupted</li>
             </ul>
         </div>

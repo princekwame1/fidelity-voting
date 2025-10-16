@@ -41,13 +41,13 @@ class DeviceFingerprintService
 
     public function generateStrictFingerprint(Request $request): string
     {
-        // This includes IP address for stricter matching
+        // Device-specific fingerprint without IP address to allow multiple users with same QR code
         $components = [
             'user_agent' => $request->userAgent() ?? '',
             'accept_language' => $request->header('Accept-Language') ?? '',
             'accept_encoding' => $request->header('Accept-Encoding') ?? '',
-            'ip_address' => $request->ip(),
-            'ip_subnet' => $this->getIpSubnet($request->ip()),
+            // Removed IP address to allow same QR code from different locations
+            // but still prevent same device from voting twice
         ];
 
         if ($request->has('fingerprint_data')) {
@@ -81,14 +81,8 @@ class DeviceFingerprintService
 
     public function checkRateLimit(string $eventId, string $ip): bool
     {
-        $key = "voting_rate_limit:{$eventId}:{$ip}";
-        $attempts = Cache::get($key, 0);
-
-        if ($attempts >= self::MAX_DEVICES_PER_IP) {
-            return false;
-        }
-
-        Cache::put($key, $attempts + 1, now()->addMinutes(self::RATE_LIMIT_WINDOW));
+        // Always allow - no IP-based rate limiting
+        // Multiple users can vote from same location with same QR code
         return true;
     }
 
@@ -123,28 +117,16 @@ class DeviceFingerprintService
 
     public function isSuspiciousActivity(string $eventId, Request $request): array
     {
-        $ip = $request->ip();
-        $deviceHash = $this->generateFingerprint($request);
+        $deviceHash = $this->generateStrictFingerprint($request);
 
         $suspicionReasons = [];
 
-        // Check if too many votes from same IP
-        $ipVotes = $this->getIpVoteCount($eventId, $ip);
-        if ($ipVotes >= self::MAX_DEVICES_PER_IP) {
-            $suspicionReasons[] = "Too many votes from IP address ({$ipVotes} devices)";
-        }
-
-        // Check if device already voted
+        // Only check if this specific device already voted
         if ($this->hasDeviceVoted($eventId, $deviceHash)) {
             $suspicionReasons[] = "Device has already voted";
         }
 
-        // Check for VPN/Proxy indicators
-        if ($this->isUsingVpnOrProxy($request)) {
-            $suspicionReasons[] = "Possible VPN/Proxy detected";
-        }
-
-        // Check for bot patterns
+        // Still check for bot patterns to prevent automated abuse
         if ($this->hasBotPatterns($request)) {
             $suspicionReasons[] = "Bot-like behavior detected";
         }
@@ -152,7 +134,7 @@ class DeviceFingerprintService
         return [
             'is_suspicious' => !empty($suspicionReasons),
             'reasons' => $suspicionReasons,
-            'risk_score' => count($suspicionReasons) * 25 // 0-100 scale
+            'risk_score' => count($suspicionReasons) * 50 // 0-100 scale
         ];
     }
 
