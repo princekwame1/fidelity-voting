@@ -280,6 +280,10 @@
             font-size: 1.3em;
             margin-bottom: 20px;
             color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
         .chart-container {
             position: relative;
@@ -777,6 +781,15 @@
         });
 
 
+        // Function to truncate question text to about 15 words
+        function truncateQuestionText(text, maxWords = 15) {
+            const words = text.split(' ');
+            if (words.length <= maxWords) {
+                return text;
+            }
+            return words.slice(0, maxWords).join(' ') + '...';
+        }
+
         const eventId = {{ $event->id }};
         const charts = {};
         let previousRankings = new Map(); // Track previous rankings for animations
@@ -844,7 +857,7 @@
                     chartCard.className = 'chart-section';
                     chartCard.id = `chart-${question.id}`;
                     chartCard.innerHTML = `
-                        <h3 class="chart-title">${question.question}</h3>
+                        <h3 class="chart-title" title="${question.question}">${truncateQuestionText(question.question)}</h3>
                         <div class="chart-container">
                             <canvas id="canvas-${question.id}"></canvas>
                         </div>
