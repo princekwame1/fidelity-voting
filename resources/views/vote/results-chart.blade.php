@@ -69,15 +69,17 @@
         }
 
         .timer-header h2 {
-            font-size: 1.8em;
-            margin: 0 0 10px 0;
-            font-weight: 600;
+            font-size: 2.5em;
+            margin: 0 0 15px 0;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .timer-header p {
-            font-size: 1.1em;
+            font-size: 1.4em;
             opacity: 0.95;
             margin: 0;
+            font-weight: 500;
         }
 
         .timer-display {
@@ -90,8 +92,8 @@
         .time-unit {
             background: white;
             border-radius: 15px;
-            padding: 20px;
-            min-width: 100px;
+            padding: 25px;
+            min-width: 120px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
@@ -103,11 +105,12 @@
         }
 
         .time-value {
-            font-size: 2.5em;
+            font-size: 3.5em;
             font-weight: bold;
             color: #f27b33;
             line-height: 1;
             transition: all 0.3s ease;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .time-value.pulse-change {
@@ -129,11 +132,12 @@
         }
 
         .time-label {
-            font-size: 0.9em;
+            font-size: 1.1em;
             color: #666;
-            margin-top: 8px;
+            margin-top: 10px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
 
         .timer-expired {
@@ -626,10 +630,10 @@
                 padding: 20px;
             }
             .timer-header h2 {
-                font-size: 1.4em;
+                font-size: 1.8em;
             }
             .timer-header p {
-                font-size: 0.95em;
+                font-size: 1.1em;
             }
             .timer-display {
                 gap: 10px;
@@ -639,10 +643,10 @@
                 padding: 15px 10px;
             }
             .time-value {
-                font-size: 1.8em;
+                font-size: 2.5em;
             }
             .time-label {
-                font-size: 0.8em;
+                font-size: 1em;
             }
         }
         @media (max-width: 768px) {
@@ -686,10 +690,10 @@
                 border-radius: 15px;
             }
             .timer-header h2 {
-                font-size: 1.2em;
+                font-size: 1.5em;
             }
             .timer-header p {
-                font-size: 0.85em;
+                font-size: 1em;
             }
             .timer-display {
                 gap: 5px;
@@ -700,11 +704,11 @@
                 border-radius: 10px;
             }
             .time-value {
-                font-size: 1.5em;
+                font-size: 2em;
             }
             .time-label {
-                font-size: 0.7em;
-                margin-top: 5px;
+                font-size: 0.85em;
+                margin-top: 8px;
             }
         }
     </style>
