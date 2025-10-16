@@ -141,15 +141,53 @@
         }
 
         .timer-expired {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.7) 0%, rgba(200, 35, 51, 0.7) 100%) !important;
             animation: shake 0.5s ease;
+            border: 3px solid #fff;
         }
+
+        .timer-expired .timer-header h3 {
+            color: #fff !important;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: pulse-text 2s infinite;
+        }
+
+        .timer-expired .timer-header p {
+            color: rgba(255,255,255,0.9) !important;
+        }
+
+        .timer-expired .time-unit {
+            background: rgba(255,255,255,0.95) !important;
+            border: 2px solid #dc3545;
+        }
+
+        .timer-expired .time-value {
+            color: #dc3545 !important;
+            font-weight: 900;
+        }
+
+        .timer-expired .time-label {
+            color: #666 !important;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.05);
+            }
+        }
+
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
             75% { transform: translateX(10px); }
         }
+
 
         .timer-warning {
             background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
@@ -588,132 +626,77 @@
             }
         }
         
-        @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-            .vertical-divider {
-                display: none;
-            }
-            .qr-section {
-                justify-content: center;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-            .header h1 {
-                font-size: 1.8em;
-            }
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
-            }
-            .stat-card {
-                padding: 15px;
-            }
-            .stat-number {
-                font-size: 1.5em;
-            }
-            .qr-code {
-                width: 200px;
-                height: 200px;
-            }
-            .qr-container {
-                padding: 20px;
-                max-width: 300px;
-            }
-            .timer-container {
-                padding: 20px;
-            }
-            .timer-header h2 {
-                font-size: 1.8em;
-            }
-            .timer-header p {
-                font-size: 1.1em;
-            }
-            .timer-display {
-                gap: 10px;
-            }
-            .time-unit {
-                min-width: 70px;
-                padding: 15px 10px;
-            }
-            .time-value {
-                font-size: 2.5em;
-            }
-            .time-label {
-                font-size: 1em;
-            }
-        }
-        @media (max-width: 768px) {
-            .update-indicator {
-                display: none;
-            }
+        /* Desktop-only message for non-desktop devices */
+        .desktop-only-message {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #f27b33 0%, #f5b361 100%);
+            color: white;
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3vh 3vw;
         }
 
-        @media (max-width: 480px) {
+        .desktop-message-content {
+            max-width: 80vw;
+        }
+
+        .desktop-message-content .icon {
+            font-size: 8vw;
+            margin-bottom: 3vh;
+        }
+
+        .desktop-message-content h2 {
+            font-size: 5vw;
+            margin-bottom: 3vh;
+            font-weight: 700;
+        }
+
+        .desktop-message-content p {
+            font-size: 3vw;
+            line-height: 1.6;
+            margin-bottom: 2vh;
+        }
+
+        .desktop-message-content .requirement {
+            background: rgba(255,255,255,0.1);
+            padding: 2vh 3vw;
+            border-radius: 15px;
+            margin-top: 3vh;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1024px) {
+            .desktop-only-message {
+                display: flex;
+            }
             .container {
-                padding: 10px;
-            }
-            .header h1 {
-                font-size: 1.5em;
-            }
-            .header p {
-                font-size: 1em;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .stat-card {
-                padding: 12px;
-            }
-            .stat-number {
-                font-size: 1.2em;
-            }
-            .qr-code {
-                width: 150px;
-                height: 150px;
-            }
-            .qr-container {
-                padding: 15px;
-            }
-            .scan-text {
-                font-size: 1em;
-            }
-            .timer-container {
-                padding: 15px;
-                border-radius: 15px;
-            }
-            .timer-header h2 {
-                font-size: 1.5em;
-            }
-            .timer-header p {
-                font-size: 1em;
-            }
-            .timer-display {
-                gap: 5px;
-            }
-            .time-unit {
-                min-width: 60px;
-                padding: 10px 5px;
-                border-radius: 10px;
-            }
-            .time-value {
-                font-size: 2em;
-            }
-            .time-label {
-                font-size: 0.85em;
-                margin-top: 8px;
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Desktop Only Message -->
+    <div class="desktop-only-message">
+        <div class="desktop-message-content">
+            <div class="icon">🖥️</div>
+            <h2>Desktop View Required</h2>
+            <p>This voting results page is optimized for desktop viewing only.</p>
+            <p>Please access this page from a desktop computer for the complete voting results experience.</p>
+            <div class="requirement">
+                <strong>Minimum Requirements:</strong><br>
+                Desktop screen (1024px+ width)
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="update-indicator">
             <div class="pulse"></div>
@@ -727,8 +710,8 @@
         <!-- Countdown Timer -->
         <div class="timer-container" id="timer-container">
             <div class="timer-header">
-                <h2 id="timer-status">{{ $event->name }} - Voting Ends In</h2>
-                <p id="end-time-display">{{ \Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A') }}</p>
+                <h3 style="font-size: 25px" id="timer-status">{{ $event->name }} - Voting Ends In</h3>
+                <p style="font-size: 18px" id="end-time-display">{{ \Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A') }}</p>
             </div>
             <div class="timer-display" id="timer-display">
                 <div class="time-unit">
@@ -792,6 +775,7 @@
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });
+
 
         const eventId = {{ $event->id }};
         const charts = {};
