@@ -115,7 +115,8 @@ class VoteController extends Controller
                         'options' => $question->options->map(function ($option) {
                             return [
                                 'id' => $option->id,
-                                'text' => $option->option_text
+                                'text' => $option->option_text,
+                                'subtext' => $option->subtext
                             ];
                         })
                     ];
@@ -246,6 +247,7 @@ class VoteController extends Controller
 
                     return [
                         'text' => $option->option_text,
+                        'subtext' => $option->subtext,
                         'votes' => $voteCount,
                         'percentage' => $percentage
                     ];
@@ -287,6 +289,7 @@ class VoteController extends Controller
                     return [
                         'id' => $option->id,
                         'text' => $option->option_text,
+                        'subtext' => $option->subtext,
                         'votes' => $voteCount,
                         'percentage' => $percentage
                     ];

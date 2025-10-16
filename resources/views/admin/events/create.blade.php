@@ -126,11 +126,21 @@
                                 </button>
                             </div>
                             <div class="options-container" id="options-${questionCount}">
-                                <div class="input-group mb-2">
-                                    <input type="text" class="form-control" name="questions[${questionCount}][options][]" placeholder="Option 1" required>
+                                <div class="option-group mb-3 border rounded p-2">
+                                    <div class="mb-2">
+                                        <input type="text" class="form-control" name="questions[${questionCount}][options][]" placeholder="Option 1" required>
+                                    </div>
+                                    <div>
+                                        <input type="text" class="form-control form-control-sm" name="questions[${questionCount}][subtexts][]" placeholder="Subtext for Option 1 (optional)">
+                                    </div>
                                 </div>
-                                <div class="input-group mb-2">
-                                    <input type="text" class="form-control" name="questions[${questionCount}][options][]" placeholder="Option 2" required>
+                                <div class="option-group mb-3 border rounded p-2">
+                                    <div class="mb-2">
+                                        <input type="text" class="form-control" name="questions[${questionCount}][options][]" placeholder="Option 2" required>
+                                    </div>
+                                    <div>
+                                        <input type="text" class="form-control form-control-sm" name="questions[${questionCount}][subtexts][]" placeholder="Subtext for Option 2 (optional)">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -151,11 +161,18 @@
             const container = document.getElementById(`options-${questionId}`);
             const optionCount = container.children.length + 1;
             const optionHtml = `
-                <div class="input-group mb-2">
-                    <input type="text" class="form-control" name="questions[${questionId}][options][]" placeholder="Option ${optionCount}" required>
-                    <button type="button" class="btn btn-danger" onclick="this.parentElement.remove()">
-                        <i class="fas fa-times"></i>
-                    </button>
+                <div class="option-group mb-3 border rounded p-2">
+                    <div class="mb-2">
+                        <div class="input-group">
+                            <input type="text" class="form-control" name="questions[${questionId}][options][]" placeholder="Option ${optionCount}" required>
+                            <button type="button" class="btn btn-danger" onclick="this.closest('.option-group').remove()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="text" class="form-control form-control-sm" name="questions[${questionId}][subtexts][]" placeholder="Subtext for Option ${optionCount} (optional)">
+                    </div>
                 </div>
             `;
             container.insertAdjacentHTML('beforeend', optionHtml);

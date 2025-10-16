@@ -511,15 +511,6 @@
             font-weight: 500;
         }
 
-        .option-subtext {
-            display: block;
-            font-size: 0.85em;
-            color: #6c757d;
-            margin-top: 5px;
-            font-weight: normal;
-            font-style: italic;
-        }
-
         .ranking-row {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -1138,9 +1129,9 @@
                 const currentVotes = row.querySelector('.vote-count')?.textContent;
                 const votesChanged = currentVotes && parseInt(currentVotes) !== option.votes;
 
-                // Build option display with subtext if available
+                // Build option display with subtext in single line format: "Option - Subtext"
                 const optionDisplay = option.optionSubtext
-                    ? `${option.optionText}<span class="option-subtext">${option.optionSubtext}</span>`
+                    ? `${option.optionText} - ${option.optionSubtext}`
                     : option.optionText;
 
                 row.innerHTML = `

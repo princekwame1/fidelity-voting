@@ -11,6 +11,7 @@ class Option extends Model
     protected $fillable = [
         'question_id',
         'option_text',
+        'subtext',
     ];
 
     public function question(): BelongsTo

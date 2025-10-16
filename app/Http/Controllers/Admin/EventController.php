@@ -45,7 +45,9 @@ class EventController extends Controller
             'questions.*.text' => 'required|string|max:500',
             'questions.*.multiple_choice' => 'boolean',
             'questions.*.options' => 'required|array|min:2',
-            'questions.*.options.*' => 'required|string|max:255'
+            'questions.*.options.*' => 'required|string|max:255',
+            'questions.*.subtexts' => 'nullable|array',
+            'questions.*.subtexts.*' => 'nullable|string|max:255'
         ]);
 
         $event = Event::create([
@@ -64,10 +66,13 @@ class EventController extends Controller
                 'multiple_choice' => $questionData['multiple_choice'] ?? false
             ]);
 
-            foreach ($questionData['options'] as $optionText) {
+            // Handle options with subtexts
+            $subtexts = $questionData['subtexts'] ?? [];
+            foreach ($questionData['options'] as $index => $optionText) {
                 Option::create([
                     'question_id' => $question->id,
-                    'option_text' => $optionText
+                    'option_text' => $optionText,
+                    'subtext' => $subtexts[$index] ?? null
                 ]);
             }
         }
