@@ -443,8 +443,10 @@
             try {
                 const response = await fetch(`/results/${eventId}/data`);
                 const data = await response.json();
-                updateCharts(data.questions);
-                updateRankings(data.questions);
+                console.log('Fetched results:', data);
+                updateCharts(data.results);
+                updateRankings(data.results);
+                lastUpdateTime = Date.now(); // Update the last update time
             } catch (error) {
                 console.error('Error fetching results:', error);
             }
@@ -472,7 +474,7 @@
                     chartCard.className = 'chart-section';
                     chartCard.id = `chart-${question.id}`;
                     chartCard.innerHTML = `
-                        <h3 class="chart-title">${question.text}</h3>
+                        <h3 class="chart-title">${question.question}</h3>
                         <div class="chart-container">
                             <canvas id="canvas-${question.id}"></canvas>
                         </div>
@@ -561,7 +563,7 @@
                 question.options.forEach(option => {
                     allOptions.push({
                         id: `${question.id}-${option.id}`,
-                        questionText: question.text,
+                        questionText: question.question,
                         optionText: option.text,
                         votes: option.votes || 0,
                         percentage: option.percentage || 0
