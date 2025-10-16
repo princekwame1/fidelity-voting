@@ -29,10 +29,10 @@
         </div>
 
         <div class="d-grid">
-            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled">
-                <span wire:loading.remove>Sign In</span>
-                <span wire:loading>
-                    <span class="spinner-border spinner-border-sm me-2 text-light" role="status" aria-hidden="true"></span>
+            <button type="submit" class="btn btn-primary" wire:loading.attr="disabled" wire:target="login">
+                <span wire:loading.remove wire:target="login">Sign In</span>
+                <span wire:loading wire:target="login" class="d-flex align-items-center justify-content-center">
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                     Signing in...
                 </span>
             </button>
