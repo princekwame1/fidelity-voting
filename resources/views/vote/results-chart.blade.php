@@ -507,6 +507,19 @@
             transform: translateX(5px);
         }
 
+        .option-text {
+            font-weight: 500;
+        }
+
+        .option-subtext {
+            display: block;
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-top: 5px;
+            font-weight: normal;
+            font-style: italic;
+        }
+
         .ranking-row {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -1047,6 +1060,7 @@
                         id: `${question.id}-${option.id}`,
                         questionText: question.question,
                         optionText: option.text,
+                        optionSubtext: option.subtext || option.sub_text || '',  // Support both naming conventions
                         votes: option.votes || 0,
                         percentage: option.percentage || 0
                     });
@@ -1124,9 +1138,14 @@
                 const currentVotes = row.querySelector('.vote-count')?.textContent;
                 const votesChanged = currentVotes && parseInt(currentVotes) !== option.votes;
 
+                // Build option display with subtext if available
+                const optionDisplay = option.optionSubtext
+                    ? `${option.optionText}<span class="option-subtext">${option.optionSubtext}</span>`
+                    : option.optionText;
+
                 row.innerHTML = `
                     <td class="rank-number">${rank}</td>
-                    <td class="option-text">${option.optionText}</td>
+                    <td class="option-text">${optionDisplay}</td>
                     <td class="vote-count ${votesChanged ? 'updated' : ''}">${option.votes}</td>
                     <td class="percentage">${option.percentage}%</td>
                     ${rankChangeIndicator}
