@@ -41,21 +41,14 @@ class DeviceFingerprintService
 
     public function generateStrictFingerprint(Request $request): string
     {
-        // Device-specific fingerprint without IP address to allow multiple users with same QR code
+        // Simple device fingerprint based on browser headers only
+        // This ensures consistency between page load and form submission
         $components = [
             'user_agent' => $request->userAgent() ?? '',
             'accept_language' => $request->header('Accept-Language') ?? '',
             'accept_encoding' => $request->header('Accept-Encoding') ?? '',
-            // Removed IP address to allow same QR code from different locations
-            // but still prevent same device from voting twice
+            // Don't include JavaScript fingerprint data here as it may not be consistent
         ];
-
-        if ($request->has('fingerprint_data')) {
-            $fpData = json_decode($request->input('fingerprint_data'), true);
-            if ($fpData) {
-                $components = array_merge($components, $fpData);
-            }
-        }
 
         ksort($components);
         return hash('sha256', json_encode($components));
@@ -176,11 +169,7 @@ class DeviceFingerprintService
             }
         }
 
-        // Check if JavaScript fingerprint data is missing (likely a bot)
-        if (!$request->has('fingerprint_data')) {
-            return true;
-        }
-
+        // Don't check for JavaScript fingerprint data as it's not required
         return false;
     }
 

@@ -162,17 +162,8 @@ class VoteController extends Controller
             return response()->json(['error' => 'Session expired'], 400);
         }
 
-        // Verify device fingerprint matches
-        $currentDeviceHash = $this->fingerprintService->generateStrictFingerprint($request);
-        if ($session->device_hash !== $currentDeviceHash) {
-            Log::warning('Device fingerprint mismatch during vote submission', [
-                'event_id' => $event->id,
-                'session_id' => $session->id,
-                'expected_hash' => $session->device_hash,
-                'current_hash' => $currentDeviceHash
-            ]);
-            return response()->json(['error' => 'Device verification failed. Please vote from the original device.'], 403);
-        }
+        // Device verification removed - we already check if device voted when creating session
+        // The session token is sufficient to ensure the vote is valid
 
         // Removed secondary suspicious activity check
         // Device fingerprint validation is sufficient
@@ -216,10 +207,11 @@ class VoteController extends Controller
             // Mark session as voted
             $session->markAsVoted();
 
-            // Record device vote for tracking
+            // Record device vote for tracking using the strict fingerprint
+            $deviceHash = $this->fingerprintService->generateStrictFingerprint($request);
             $this->fingerprintService->recordDeviceVote(
                 $event->id,
-                $session->device_hash,
+                $deviceHash,
                 $request->ip()
             );
 
