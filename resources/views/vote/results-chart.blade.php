@@ -40,6 +40,143 @@
             gap: 20px;
             margin-bottom: 30px;
         }
+
+        /* Timer Styles */
+        .timer-container {
+            background: linear-gradient(135deg, #f27b33 0%, #f5b361 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(242, 123, 51, 0.2);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .timer-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .timer-header h2 {
+            font-size: 1.8em;
+            margin: 0 0 10px 0;
+            font-weight: 600;
+        }
+
+        .timer-header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin: 0;
+        }
+
+        .timer-display {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .time-unit {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 100px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .time-unit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .time-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f27b33;
+            line-height: 1;
+            transition: all 0.3s ease;
+        }
+
+        .time-value.pulse-change {
+            animation: pulseValue 0.5s ease;
+        }
+
+        @keyframes pulseValue {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+                color: #10b981;
+            }
+            100% {
+                transform: scale(1);
+                color: #f27b33;
+            }
+        }
+
+        .time-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timer-expired {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
+        .timer-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+            animation: warningPulse 2s infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% {
+                box-shadow: 0 15px 40px rgba(255, 193, 7, 0.2);
+            }
+            50% {
+                box-shadow: 0 20px 50px rgba(255, 193, 7, 0.4);
+            }
+        }
+
+        .timer-progress {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .timer-progress-bar {
+            height: 100%;
+            background: white;
+            border-radius: 3px;
+            transition: width 1s linear;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
         .stat-card {
             background: white;
             border-radius: 15px;
@@ -485,6 +622,28 @@
                 padding: 20px;
                 max-width: 300px;
             }
+            .timer-container {
+                padding: 20px;
+            }
+            .timer-header h2 {
+                font-size: 1.4em;
+            }
+            .timer-header p {
+                font-size: 0.95em;
+            }
+            .timer-display {
+                gap: 10px;
+            }
+            .time-unit {
+                min-width: 70px;
+                padding: 15px 10px;
+            }
+            .time-value {
+                font-size: 1.8em;
+            }
+            .time-label {
+                font-size: 0.8em;
+            }
         }
         @media (max-width: 768px) {
             .update-indicator {
@@ -522,6 +681,31 @@
             .scan-text {
                 font-size: 1em;
             }
+            .timer-container {
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .timer-header h2 {
+                font-size: 1.2em;
+            }
+            .timer-header p {
+                font-size: 0.85em;
+            }
+            .timer-display {
+                gap: 5px;
+            }
+            .time-unit {
+                min-width: 60px;
+                padding: 10px 5px;
+                border-radius: 10px;
+            }
+            .time-value {
+                font-size: 1.5em;
+            }
+            .time-label {
+                font-size: 0.7em;
+                margin-top: 5px;
+            }
         }
     </style>
 </head>
@@ -537,6 +721,35 @@
             @if($event->description)
                 <p>{{ $event->description }}</p>
             @endif
+        </div>
+
+        <!-- Countdown Timer -->
+        <div class="timer-container" id="timer-container">
+            <div class="timer-header">
+                <h2 id="timer-status">Voting Ends In</h2>
+                <p id="end-time-display">{{ \Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A') }}</p>
+            </div>
+            <div class="timer-display" id="timer-display">
+                <div class="time-unit">
+                    <div class="time-value" id="days">0</div>
+                    <div class="time-label">Days</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="hours">0</div>
+                    <div class="time-label">Hours</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="minutes">0</div>
+                    <div class="time-label">Minutes</div>
+                </div>
+                <div class="time-unit">
+                    <div class="time-value" id="seconds">0</div>
+                    <div class="time-label">Seconds</div>
+                </div>
+            </div>
+            <div class="timer-progress">
+                <div class="timer-progress-bar" id="progress-bar"></div>
+            </div>
         </div>
 
         <!-- QR Code and Charts Section - Combined Card -->
@@ -583,6 +796,12 @@
         const charts = {};
         let previousRankings = new Map(); // Track previous rankings for animations
         let isFirstLoad = true; // Track first load to avoid initial animations
+
+        // Timer variables
+        const eventEndTime = new Date('{{ $event->end_time }}').getTime();
+        const eventStartTime = new Date('{{ $event->start_time }}').getTime();
+        let timerInterval;
+        let previousTimeValues = {};
 
         // Chart colors - Primary and Secondary based
         const colors = [
@@ -896,22 +1115,129 @@
             });
         }
 
+        // Countdown Timer Function
+        function updateTimer() {
+            const now = new Date().getTime();
+            const distance = eventEndTime - now;
+            const totalDuration = eventEndTime - eventStartTime;
+            const elapsed = now - eventStartTime;
+
+            const timerContainer = document.getElementById('timer-container');
+            const timerStatus = document.getElementById('timer-status');
+
+            if (distance < 0) {
+                // Voting has ended
+                clearInterval(timerInterval);
+                timerContainer.classList.add('timer-expired');
+                timerStatus.textContent = 'Voting Has Ended';
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                document.getElementById('progress-bar').style.width = '100%';
+
+                // Stop fetching results
+                clearInterval(resultsInterval);
+                return;
+            }
+
+            // Calculate time units
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Update display with animation
+            updateTimeUnit('days', days);
+            updateTimeUnit('hours', hours);
+            updateTimeUnit('minutes', minutes);
+            updateTimeUnit('seconds', seconds);
+
+            // Update progress bar
+            const progressPercentage = Math.min(100, (elapsed / totalDuration) * 100);
+            document.getElementById('progress-bar').style.width = progressPercentage + '%';
+
+            // Add warning class if less than 5 minutes remaining
+            if (distance < 5 * 60 * 1000 && !timerContainer.classList.contains('timer-warning')) {
+                timerContainer.classList.add('timer-warning');
+                timerStatus.textContent = 'Voting Ending Soon!';
+            }
+        }
+
+        function updateTimeUnit(unit, value) {
+            const element = document.getElementById(unit);
+            const currentValue = parseInt(element.textContent);
+
+            if (currentValue !== value) {
+                element.textContent = value;
+                element.classList.add('pulse-change');
+                setTimeout(() => {
+                    element.classList.remove('pulse-change');
+                }, 500);
+            }
+        }
+
         // Initial load
         fetchResults();
+        updateTimer();
 
-        // Auto-refresh every 3 seconds
-        setInterval(fetchResults, 3000);
+        // Start timer interval
+        timerInterval = setInterval(updateTimer, 1000);
+
+        // Auto-refresh results every 3 seconds
+        const resultsInterval = setInterval(fetchResults, 3000);
 
         // Visual feedback for updates
         let lastUpdateTime = Date.now();
         setInterval(() => {
             const indicator = document.querySelector('.update-indicator');
-            if (Date.now() - lastUpdateTime < 4000) {
-                indicator.style.opacity = '1';
-            } else {
-                indicator.style.opacity = '0.5';
+            if (indicator) {
+                if (Date.now() - lastUpdateTime < 4000) {
+                    indicator.style.opacity = '1';
+                } else {
+                    indicator.style.opacity = '0.5';
+                }
             }
         }, 100);
+
+        // Check if voting hasn't started yet
+        function checkVotingStatus() {
+            const now = new Date().getTime();
+            const timerContainer = document.getElementById('timer-container');
+            const timerStatus = document.getElementById('timer-status');
+
+            if (now < eventStartTime) {
+                // Voting hasn't started
+                const distance = eventStartTime - now;
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                timerContainer.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
+                timerStatus.textContent = 'Voting Starts In';
+                document.getElementById('end-time-display').textContent =
+                    'Starts: {{ \Carbon\Carbon::parse($event->start_time)->format("F j, Y \\a\\t g:i A") }}';
+
+                return false; // Voting not active
+            }
+            return true; // Voting is active
+        }
+
+        // Initialize voting status check
+        if (!checkVotingStatus()) {
+            // If voting hasn't started, check periodically
+            const statusInterval = setInterval(() => {
+                if (checkVotingStatus()) {
+                    clearInterval(statusInterval);
+                    // Reset timer display for voting end
+                    document.getElementById('timer-status').textContent = 'Voting Ends In';
+                    document.getElementById('end-time-display').textContent =
+                        '{{ \Carbon\Carbon::parse($event->end_time)->format("F j, Y \\a\\t g:i A") }}';
+                    document.getElementById('timer-container').style.background =
+                        'linear-gradient(135deg, #f27b33 0%, #f5b361 100%)';
+                }
+            }, 1000);
+        }
     </script>
 </body>
 </html>
