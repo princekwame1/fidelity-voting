@@ -105,7 +105,7 @@
         }
 
         .time-value {
-            font-size: 3.5em;
+            font-size: 2em;
             font-weight: bold;
             color: #f27b33;
             line-height: 1;
@@ -251,11 +251,15 @@
         }
         .chart-section {
             padding: 25px;
-            min-height: 400px;
+            min-height: 600px;
             border-bottom: 1px solid #eee;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .chart-section::before {
@@ -280,10 +284,16 @@
             font-size: 1.3em;
             margin-bottom: 20px;
             color: #333;
+            text-align: center;
+            width: 100%;
         }
         .chart-container {
             position: relative;
-            height: 300px;
+            height: 400px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .update-indicator {
             position: fixed;
@@ -357,7 +367,7 @@
         }
         .qr-section {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: center;
             height: 100%;
         }
@@ -369,6 +379,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
         .qr-code {
             width: 350px;
@@ -439,7 +450,7 @@
         .vertical-divider {
             width: 4px;
             background: #edecec;
-            height: 100%;
+            height: 80%;
             align-self: center;
             border-radius: 2px;
         }
@@ -481,6 +492,19 @@
             padding: 15px;
             border-bottom: 1px solid #dee2e6;
             transition: all 0.3s ease;
+        }
+
+        .rankings-table tbody tr:nth-child(odd) {
+            background-color: #f8f9fa;
+        }
+
+        .rankings-table tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .rankings-table tbody tr:hover {
+            background-color: #e9ecef;
+            transform: translateX(5px);
         }
 
         .ranking-row {
