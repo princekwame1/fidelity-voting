@@ -915,7 +915,8 @@
                                     beginAtZero: true,
                                     ticks: {
                                         stepSize: 1
-                                    }
+                                    },
+                                    grace: '10%' // Add some space at the top for labels
                                 },
                                 x: {
                                     ticks: {
@@ -929,7 +930,28 @@
                                 duration: 1500,
                                 easing: 'easeInOutCubic',
                                 animateRotate: true,
-                                animateScale: true
+                                animateScale: true,
+                                onComplete: function(animation) {
+                                    // Draw data labels after animation completes
+                                    const chart = animation.chart;
+                                    const ctx = chart.ctx;
+                                    ctx.font = 'bold 14px sans-serif';
+                                    ctx.fillStyle = '#333';
+                                    ctx.textAlign = 'center';
+                                    ctx.textBaseline = 'bottom';
+
+                                    chart.data.datasets.forEach((dataset, i) => {
+                                        const meta = chart.getDatasetMeta(i);
+                                        meta.data.forEach((bar, index) => {
+                                            const data = dataset.data[index];
+                                            if (data > 0) {
+                                                const x = bar.x;
+                                                const y = bar.y - 5;
+                                                ctx.fillText(data, x, y);
+                                            }
+                                        });
+                                    });
+                                }
                             }
                         }
                     });
@@ -954,7 +976,30 @@
 
                     chart.data.labels = question.options.map(opt => opt.text);
                     chart.data.datasets[0].data = newData;
+
+                    // Update chart and redraw labels
                     chart.update('active');
+
+                    // Redraw data labels after update
+                    setTimeout(() => {
+                        const ctx = chart.ctx;
+                        ctx.font = 'bold 14px sans-serif';
+                        ctx.fillStyle = '#333';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'bottom';
+
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const data = dataset.data[index];
+                                if (data > 0) {
+                                    const x = bar.x;
+                                    const y = bar.y - 5;
+                                    ctx.fillText(data, x, y);
+                                }
+                            });
+                        });
+                    }, 100);
                 }
             });
         }
