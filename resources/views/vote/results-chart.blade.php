@@ -716,9 +716,9 @@
             <span>Live Updates</span>
         </div>
 
-        <div class="header">
+        {{-- <div class="header">
             <h1>{{ $event->name }}</h1>
-        </div>
+        </div> --}}
 
         <!-- Countdown Timer -->
         <div class="timer-container" id="timer-container">
