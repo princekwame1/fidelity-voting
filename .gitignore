@@ -1,0 +1,44 @@
+# Laravel specific
+/vendor/
+node_modules/
+public/storage
+storage/*.key
+.env
+.env.backup
+.env.testing
+Homestead.yaml
+Homestead.json
+npm-debug.log
+yarn-error.log
+package-lock.json
+.env.example.local
+
+# Laravel Mix / Vite
+/public/hot
+/public/build
+/public/mix-manifest.json
+
+# IDE & OS Files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
+
+# Composer / PHP specific
+composer.lock
+.phpunit.result.cache
+
+# Laravel logs and cache
+/storage/logs/*.log
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+/storage/framework/testing/*
+
+# Cache and compiled files
+bootstrap/cache/*.php
+
+# Optional: Ignore user-uploaded files (if handled externally)
+# /public/uploads/
