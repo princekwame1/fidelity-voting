@@ -22,6 +22,7 @@ class Event extends Model
     protected $casts = [
         'start_time' => 'datetime',
         'end_time' => 'datetime',
+        'show_results_table' => 'boolean',
     ];
 
     public function questions(): HasMany

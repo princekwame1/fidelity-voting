@@ -783,6 +783,7 @@
             </div>
         </div>
 
+        {{-- Debug: show_results_table = {{ $event->show_results_table ? 'true' : 'false' }} --}}
         @if($event->show_results_table)
         <!-- Live Rankings Table Section -->
         <div class="rankings-section">

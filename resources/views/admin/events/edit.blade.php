@@ -72,6 +72,19 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="show_results_table" value="1"
+                                       id="show_results_table" {{ old('show_results_table', $event->show_results_table) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="show_results_table">
+                                    Show results table on results page
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                When enabled, displays a ranking table with contestant names and vote counts on the results page
+                            </small>
+                        </div>
+
                         @if($event->votes()->count() > 0)
                             <div class="alert alert-warning">
                                 <i class="fas fa-exclamation-triangle"></i>

@@ -106,8 +106,11 @@ class EventController extends Controller
             'description' => 'nullable|string',
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
-            'voting_duration_minutes' => 'required|integer|min:5|max:1440'
+            'voting_duration_minutes' => 'required|integer|min:5|max:1440',
+            'show_results_table' => 'boolean'
         ]);
+
+        $validated['show_results_table'] = $validated['show_results_table'] ?? false;
 
         $event->update($validated);
 
