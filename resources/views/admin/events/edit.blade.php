@@ -85,6 +85,19 @@
                             </small>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="collect_emails" value="1"
+                                       id="collect_emails" {{ old('collect_emails', $event->collect_emails) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="collect_emails">
+                                    Collect voter email addresses
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                When enabled, voters will be required to enter their email address before voting
+                            </small>
+                        </div>
+
                         @if($event->votes()->count() > 0)
                             <div class="alert alert-warning">
                                 <i class="fas fa-exclamation-triangle"></i>

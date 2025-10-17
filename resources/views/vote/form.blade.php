@@ -128,6 +128,25 @@
 
         <div id="alert-container"></div>
 
+        @if($event->collect_emails)
+        <div class="card mb-4" style="border: 2px solid #f27b33;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #f27b33; margin-bottom: 15px;">EMAIL REQUIRED</h5>
+                <div class="mb-3">
+                    <label for="voter_email" class="form-label" style="font-weight: 600;">EMAIL ADDRESS *</label>
+                    <input type="email"
+                           class="form-control"
+                           id="voter_email"
+                           name="voter_email"
+                           placeholder="ENTER YOUR EMAIL ADDRESS"
+                           required
+                           style="border: 2px solid #e9ecef; padding: 12px; font-size: 16px;">
+                    <small class="text-muted">YOUR EMAIL IS REQUIRED TO PARTICIPATE IN THIS VOTING</small>
+                </div>
+            </div>
+        </div>
+        @endif
+
         <form id="voting-form">
             @csrf
             @foreach($questions as $question)
@@ -205,6 +224,10 @@
                     const fingerprintData = await generateDeviceFingerprint();
                     const sessionToken = document.getElementById('session_token').value;
 
+                    // Get email if required
+                    const emailInput = document.getElementById('voter_email');
+                    const voterEmail = emailInput ? emailInput.value : null;
+
                     const response = await fetch(window.location.href, {
                         method: 'POST',
                         headers: {
@@ -215,7 +238,8 @@
                         body: JSON.stringify({
                             answers: answers,
                             session_token: sessionToken,
-                            fingerprint_data: fingerprintData
+                            fingerprint_data: fingerprintData,
+                            voter_email: voterEmail
                         })
                     });
 

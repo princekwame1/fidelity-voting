@@ -81,6 +81,18 @@
                             </small>
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="collect_emails" value="1" id="collect_emails">
+                                <label class="form-check-label" for="collect_emails">
+                                    Collect voter email addresses
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                When enabled, voters will be required to enter their email address before voting
+                            </small>
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                             <h5>Questions</h5>
                             <button type="button" class="btn btn-primary btn-sm" onclick="addQuestion()">

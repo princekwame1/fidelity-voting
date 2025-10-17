@@ -42,6 +42,7 @@ class EventController extends Controller
             'end_time' => 'required|date|after:start_time',
             'voting_duration_minutes' => 'required|integer|min:5|max:1440',
             'show_results_table' => 'boolean',
+            'collect_emails' => 'boolean',
             'questions' => 'required|array|min:1',
             'questions.*.text' => 'required|string|max:500',
             'questions.*.multiple_choice' => 'boolean',
@@ -58,6 +59,7 @@ class EventController extends Controller
             'end_time' => $validated['end_time'],
             'voting_duration_minutes' => $validated['voting_duration_minutes'],
             'show_results_table' => $validated['show_results_table'] ?? true,
+            'collect_emails' => $validated['collect_emails'] ?? false,
             'created_by' => auth()->id()
         ]);
 
@@ -107,10 +109,12 @@ class EventController extends Controller
             'start_time' => 'required|date',
             'end_time' => 'required|date|after:start_time',
             'voting_duration_minutes' => 'required|integer|min:5|max:1440',
-            'show_results_table' => 'boolean'
+            'show_results_table' => 'boolean',
+            'collect_emails' => 'boolean'
         ]);
 
         $validated['show_results_table'] = $validated['show_results_table'] ?? false;
+        $validated['collect_emails'] = $validated['collect_emails'] ?? false;
 
         $event->update($validated);
 

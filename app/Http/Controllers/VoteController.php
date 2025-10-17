@@ -7,6 +7,7 @@ use App\Services\DeviceFingerprintService;
 use App\Models\Event;
 use App\Models\VotingSession;
 use App\Models\Vote;
+use App\Models\VoterEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\DB;
@@ -168,7 +169,8 @@ class VoteController extends Controller
             'session_token' => 'required|string',
             'answers' => 'required|array',
             'answers.*' => 'required',
-            'fingerprint_data' => 'nullable|string'
+            'fingerprint_data' => 'nullable|string',
+            'voter_email' => $event->collect_emails ? 'required|email' : 'nullable|email'
         ]);
 
         // Verify session token
@@ -232,6 +234,17 @@ class VoteController extends Controller
 
             // Mark session as voted
             $session->markAsVoted();
+
+            // Store voter email if event is configured to collect emails
+            if ($event->collect_emails && !empty($validated['voter_email'])) {
+                VoterEmail::create([
+                    'event_id' => $event->id,
+                    'voting_session_id' => $session->id,
+                    'email' => $validated['voter_email'],
+                    'device_hash' => $session->device_hash,
+                    'ip_address' => $request->ip(),
+                ]);
+            }
 
             // No longer need to record in cache since we're using database
             // The voting_sessions table with has_voted=true is our source of truth

@@ -16,6 +16,7 @@ class Event extends Model
         'end_time',
         'voting_duration_minutes',
         'show_results_table',
+        'collect_emails',
         'created_by',
     ];
 
@@ -23,6 +24,7 @@ class Event extends Model
         'start_time' => 'datetime',
         'end_time' => 'datetime',
         'show_results_table' => 'boolean',
+        'collect_emails' => 'boolean',
     ];
 
     public function questions(): HasMany
