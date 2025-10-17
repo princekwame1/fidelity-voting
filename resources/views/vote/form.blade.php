@@ -129,25 +129,34 @@
         <div id="alert-container"></div>
 
         @if($event->collect_emails)
-        <div class="card mb-4" style="border: 2px solid #f27b33;">
+        <div class="card mb-4" style="border: 2px solid #f27b33;" id="email-card">
             <div class="card-body">
                 <h5 class="card-title" style="color: #f27b33; margin-bottom: 15px;">EMAIL REQUIRED</h5>
-                <div class="mb-3">
-                    <label for="voter_email" class="form-label" style="font-weight: 600;">EMAIL ADDRESS *</label>
-                    <input type="email"
-                           class="form-control"
-                           id="voter_email"
-                           name="voter_email"
-                           placeholder="ENTER YOUR EMAIL ADDRESS"
-                           required
-                           style="border: 2px solid #e9ecef; padding: 12px; font-size: 16px;">
-                    <small class="text-muted">YOUR EMAIL IS REQUIRED TO PARTICIPATE IN THIS VOTING</small>
+                <form id="email-form">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="voter_email" class="form-label" style="font-weight: 600;">EMAIL ADDRESS *</label>
+                        <input type="email"
+                               class="form-control"
+                               id="voter_email"
+                               name="voter_email"
+                               placeholder="ENTER YOUR EMAIL ADDRESS"
+                               required
+                               style="border: 2px solid #e9ecef; padding: 12px; font-size: 16px;">
+                        <small class="text-muted">YOUR EMAIL IS REQUIRED TO PARTICIPATE IN THIS VOTING</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="email-submit-btn" style="background-color: #f27b33; border-color: #f27b33; width: 100%; padding: 12px; font-weight: 600;">
+                        SUBMIT EMAIL TO CONTINUE
+                    </button>
+                </form>
+                <div id="email-success" class="mt-3" style="display: none; color: #28a745; font-weight: 600;">
+                    ✓ EMAIL SUBMITTED SUCCESSFULLY - YOU CAN NOW VOTE BELOW
                 </div>
             </div>
         </div>
         @endif
 
-        <form id="voting-form">
+        <form id="voting-form" @if($event->collect_emails) style="display: none;" @endif>
             @csrf
             @foreach($questions as $question)
                 <div class="question" data-question-id="{{ $question->id }}">
@@ -184,6 +193,64 @@
             const form = document.getElementById('voting-form');
             const submitButton = document.getElementById('submit-button');
             const alertContainer = document.getElementById('alert-container');
+            const emailInput = document.getElementById('voter_email');
+
+            // Handle email submission (if email collection is enabled)
+            @if($event->collect_emails)
+            const emailForm = document.getElementById('email-form');
+            const emailSubmitBtn = document.getElementById('email-submit-btn');
+            const emailSuccess = document.getElementById('email-success');
+
+            if (emailForm) {
+                emailForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+
+                    const emailValue = emailInput.value.trim();
+                    if (!emailValue) {
+                        showAlert('Please enter your email address');
+                        return;
+                    }
+
+                    emailSubmitBtn.disabled = true;
+                    emailSubmitBtn.textContent = 'SUBMITTING...';
+
+                    try {
+                        const response = await fetch('{{ route("vote.email", $event->encrypted_id) }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                voter_email: emailValue
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok && data.success) {
+                            // Hide email form and show success message
+                            emailForm.style.display = 'none';
+                            emailSuccess.style.display = 'block';
+
+                            // Show voting form
+                            form.style.display = 'block';
+                            form.scrollIntoView({ behavior: 'smooth' });
+                        } else {
+                            showAlert(data.error || 'Failed to submit email');
+                            emailSubmitBtn.disabled = false;
+                            emailSubmitBtn.textContent = 'SUBMIT EMAIL TO CONTINUE';
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        showAlert('An error occurred while submitting email');
+                        emailSubmitBtn.disabled = false;
+                        emailSubmitBtn.textContent = 'SUBMIT EMAIL TO CONTINUE';
+                    }
+                });
+            }
+            @endif
 
             function showAlert(message, type = 'error') {
                 alertContainer.innerHTML = `<div class="${type}">${message}</div>`;
@@ -224,10 +291,6 @@
                     const fingerprintData = await generateDeviceFingerprint();
                     const sessionToken = document.getElementById('session_token').value;
 
-                    // Get email if required
-                    const emailInput = document.getElementById('voter_email');
-                    const voterEmail = emailInput ? emailInput.value : null;
-
                     const response = await fetch(window.location.href, {
                         method: 'POST',
                         headers: {
@@ -238,8 +301,7 @@
                         body: JSON.stringify({
                             answers: answers,
                             session_token: sessionToken,
-                            fingerprint_data: fingerprintData,
-                            voter_email: voterEmail
+                            fingerprint_data: fingerprintData
                         })
                     });
 

@@ -97,6 +97,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::prefix('vote')->group(function () {
     Route::get('/event/{event}', [App\Http\Controllers\VoteController::class, 'show'])
         ->name('vote.show');
+    Route::post('/event/{event}/email', [App\Http\Controllers\VoteController::class, 'submitEmail'])
+        ->name('vote.email');
     Route::post('/event/{event}', [App\Http\Controllers\VoteController::class, 'submit'])
         ->name('vote.submit');
     Route::get('/success', [App\Http\Controllers\VoteController::class, 'success'])

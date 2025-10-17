@@ -163,14 +163,74 @@ class VoteController extends Controller
         ]);
     }
 
+    public function submitEmail(Request $request, Event $event): JsonResponse
+    {
+        // Check if event requires email collection
+        if (!$event->collect_emails) {
+            return response()->json(['error' => 'Email collection is not enabled for this event'], 400);
+        }
+
+        $validated = $request->validate([
+            'voter_email' => 'required|email'
+        ]);
+
+        $strictDeviceHash = $this->fingerprintService->generateStrictFingerprint($request);
+        $ipAddress = $request->ip();
+
+        // Check if this device already has an email for this event
+        $existingEmail = VoterEmail::where('event_id', $event->id)
+            ->where('device_hash', $strictDeviceHash)
+            ->first();
+
+        if ($existingEmail) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Email already submitted for this device',
+                'can_vote' => true
+            ]);
+        }
+
+        // Check if this device already has a session for this event
+        $existingSession = VotingSession::where('event_id', $event->id)
+            ->where('device_hash', $strictDeviceHash)
+            ->first();
+
+        if (!$existingSession) {
+            // Create new session
+            $session = VotingSession::create([
+                'event_id' => $event->id,
+                'session_token' => VotingSession::generateUniqueToken(),
+                'device_hash' => $strictDeviceHash,
+                'ip_address' => $ipAddress,
+                'expires_at' => Carbon::now()->addMinutes($event->voting_duration_minutes ?? 30),
+            ]);
+        } else {
+            $session = $existingSession;
+        }
+
+        // Store the email
+        VoterEmail::create([
+            'event_id' => $event->id,
+            'voting_session_id' => $session->id,
+            'email' => $validated['voter_email'],
+            'device_hash' => $strictDeviceHash,
+            'ip_address' => $ipAddress,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Email submitted successfully',
+            'can_vote' => true
+        ]);
+    }
+
     public function submit(Request $request, Event $event): JsonResponse
     {
         $validated = $request->validate([
             'session_token' => 'required|string',
             'answers' => 'required|array',
             'answers.*' => 'required',
-            'fingerprint_data' => 'nullable|string',
-            'voter_email' => $event->collect_emails ? 'required|email' : 'nullable|email'
+            'fingerprint_data' => 'nullable|string'
         ]);
 
         // Verify session token
@@ -235,16 +295,7 @@ class VoteController extends Controller
             // Mark session as voted
             $session->markAsVoted();
 
-            // Store voter email if event is configured to collect emails
-            if ($event->collect_emails && !empty($validated['voter_email'])) {
-                VoterEmail::create([
-                    'event_id' => $event->id,
-                    'voting_session_id' => $session->id,
-                    'email' => $validated['voter_email'],
-                    'device_hash' => $session->device_hash,
-                    'ip_address' => $request->ip(),
-                ]);
-            }
+            // Email is already stored from the separate email submission step
 
             // No longer need to record in cache since we're using database
             // The voting_sessions table with has_voted=true is our source of truth
