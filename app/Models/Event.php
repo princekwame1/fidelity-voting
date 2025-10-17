@@ -15,6 +15,7 @@ class Event extends Model
         'start_time',
         'end_time',
         'voting_duration_minutes',
+        'show_results_table',
         'created_by',
     ];
 

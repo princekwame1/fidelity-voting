@@ -783,6 +783,7 @@
             </div>
         </div>
 
+        @if($event->show_results_table)
         <!-- Live Rankings Table Section -->
         <div class="rankings-section">
             {{-- <h2 class="rankings-title">Live Rankings</h2> --}}
@@ -790,6 +791,7 @@
                 <div class="no-data">No voting data yet. Rankings will appear here once voting begins.</div>
             </div>
         </div>
+        @endif
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
@@ -1032,6 +1034,11 @@
 
         function updateRankings(questions) {
             const container = document.getElementById('rankings-container');
+
+            // Skip if rankings container doesn't exist (when show_results_table is false)
+            if (!container) {
+                return;
+            }
 
             if (!questions || questions.length === 0) {
                 container.innerHTML = '<div class="no-data">No voting data yet. Rankings will appear here once voting begins.</div>';

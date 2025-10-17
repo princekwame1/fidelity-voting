@@ -41,6 +41,7 @@ class EventController extends Controller
             'start_time' => 'required|date|after:now',
             'end_time' => 'required|date|after:start_time',
             'voting_duration_minutes' => 'required|integer|min:5|max:1440',
+            'show_results_table' => 'boolean',
             'questions' => 'required|array|min:1',
             'questions.*.text' => 'required|string|max:500',
             'questions.*.multiple_choice' => 'boolean',
@@ -56,6 +57,7 @@ class EventController extends Controller
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
             'voting_duration_minutes' => $validated['voting_duration_minutes'],
+            'show_results_table' => $validated['show_results_table'] ?? true,
             'created_by' => auth()->id()
         ]);
 

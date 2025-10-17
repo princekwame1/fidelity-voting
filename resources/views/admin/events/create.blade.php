@@ -69,6 +69,18 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="show_results_table" value="1" id="show_results_table" checked>
+                                <label class="form-check-label" for="show_results_table">
+                                    Show results table on results page
+                                </label>
+                            </div>
+                            <small class="text-muted">
+                                When enabled, displays a ranking table with contestant names and vote counts on the results page
+                            </small>
+                        </div>
+
                         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
                             <h5>Questions</h5>
                             <button type="button" class="btn btn-primary btn-sm" onclick="addQuestion()">
