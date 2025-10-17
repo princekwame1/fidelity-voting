@@ -143,7 +143,7 @@
         .timer-expired {
             background: linear-gradient(135deg, #f27b33 0%, #f5b361 100%) !important;
             animation: shake 0.5s ease;
-            border: 3px solid #fff;
+            /* border: 3px solid #fff; */
             opacity: 0.9;
         }
 
@@ -1249,6 +1249,9 @@
                 document.getElementById('seconds').textContent = '0';
                 document.getElementById('progress-bar').style.width = '100%';
 
+                // Hide QR code and expand charts
+                hideQRCodeAndExpandCharts();
+
                 // Stop fetching results
                 clearInterval(resultsInterval);
                 return;
@@ -1294,6 +1297,44 @@
                     element.classList.remove('pulse-change');
                 }, 500);
             }
+        }
+
+        function hideQRCodeAndExpandCharts() {
+            // Hide the QR section
+            const qrSection = document.querySelector('.qr-section');
+            if (qrSection) {
+                qrSection.style.display = 'none';
+            }
+
+            // Expand the charts to cover full width
+            const chartsContainer = document.querySelector('.charts-container');
+            if (chartsContainer) {
+                chartsContainer.style.width = '100%';
+                chartsContainer.style.maxWidth = '100%';
+            }
+
+            // Remove the vertical divider
+            const divider = document.querySelector('.vertical-divider');
+            if (divider) {
+                divider.style.display = 'none';
+            }
+
+            // Update the content grid to single column
+            const contentGrid = document.querySelector('.content-grid');
+            if (contentGrid) {
+                contentGrid.style.gridTemplateColumns = '1fr';
+                contentGrid.style.gap = '0';
+            }
+
+
+            // Resize all existing charts to fit the new container
+            setTimeout(() => {
+                Object.values(charts).forEach(chart => {
+                    if (chart) {
+                        chart.resize();
+                    }
+                });
+            }, 100);
         }
 
         // Initial load
