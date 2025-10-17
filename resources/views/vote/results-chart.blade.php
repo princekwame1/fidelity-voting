@@ -507,7 +507,7 @@
             transform: translateX(5px);
         }
 
-        .option-text {
+        .contestant-text {
             font-weight: 500;
         }
 
@@ -1070,7 +1070,7 @@
                     <thead>
                         <tr>
                             <th style="width: 60px;">Rank</th>
-                            <th>Option</th>
+                            <th>Contestant</th>
                             <th style="width: 80px; text-align: center;">Votes</th>
                             <th style="width: 80px; text-align: center;">%</th>
                         </tr>
@@ -1129,14 +1129,14 @@
                 const currentVotes = row.querySelector('.vote-count')?.textContent;
                 const votesChanged = currentVotes && parseInt(currentVotes) !== option.votes;
 
-                // Build option display with subtext in single line format: "Option - Subtext"
-                const optionDisplay = option.optionSubtext
+                // Build contestant display with subtext in single line format: "Contestant - Subtext"
+                const contestantDisplay = option.optionSubtext
                     ? `${option.optionText} - ${option.optionSubtext}`
                     : option.optionText;
 
                 row.innerHTML = `
                     <td class="rank-number">${rank}</td>
-                    <td class="option-text">${optionDisplay}</td>
+                    <td class="contestant-text">${contestantDisplay}</td>
                     <td class="vote-count ${votesChanged ? 'updated' : ''}">${option.votes}</td>
                     <td class="percentage">${option.percentage}%</td>
                     ${rankChangeIndicator}
