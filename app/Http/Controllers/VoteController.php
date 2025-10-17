@@ -40,6 +40,19 @@ class VoteController extends Controller
         $strictDeviceHash = $this->fingerprintService->generateStrictFingerprint($request);
         $ipAddress = $request->ip();
 
+        // Log the device fingerprint for debugging
+        Log::info('Device access attempt', [
+            'event_id' => $event->id,
+            'device_hash' => $strictDeviceHash,
+            'ip' => $ipAddress,
+            'user_agent' => $request->userAgent(),
+            'headers' => [
+                'accept' => $request->header('Accept'),
+                'accept_language' => $request->header('Accept-Language'),
+                'accept_encoding' => $request->header('Accept-Encoding'),
+            ]
+        ]);
+
         // Skip suspicious activity check to allow multiple users from same IP
         // We still prevent same device from voting twice below
 
@@ -72,9 +85,21 @@ class VoteController extends Controller
 
             $session = $existingSession;
         } else {
-            // Check if this specific device has voted (using strict fingerprint)
-            if ($this->fingerprintService->hasDeviceVoted($event->id, $strictDeviceHash)) {
-                Log::warning('Attempted vote from already voted device', [
+            // Check if this specific device has voted by looking in the database
+            // This is more reliable than cache which can have issues
+            $deviceHasVoted = VotingSession::where('event_id', $event->id)
+                ->where('device_hash', $strictDeviceHash)
+                ->where('has_voted', true)
+                ->exists();
+
+            Log::info('Database vote check', [
+                'event_id' => $event->id,
+                'device_hash' => $strictDeviceHash,
+                'has_voted_in_db' => $deviceHasVoted,
+            ]);
+
+            if ($deviceHasVoted) {
+                Log::warning('Attempted vote from already voted device (found in database)', [
                     'event_id' => $event->id,
                     'device_hash' => $strictDeviceHash,
                     'ip' => $ipAddress
@@ -208,13 +233,8 @@ class VoteController extends Controller
             // Mark session as voted
             $session->markAsVoted();
 
-            // Record device vote for tracking using the strict fingerprint
-            $deviceHash = $this->fingerprintService->generateStrictFingerprint($request);
-            $this->fingerprintService->recordDeviceVote(
-                $event->id,
-                $deviceHash,
-                $request->ip()
-            );
+            // No longer need to record in cache since we're using database
+            // The voting_sessions table with has_voted=true is our source of truth
 
             return response()->json([
                 'success' => true,

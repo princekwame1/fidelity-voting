@@ -120,9 +120,9 @@
 <body>
     <div class="container">
         <div class="event-header">
-            <h1 class="event-title">{{ $event->name }}</h1>
+            <h1 class="event-title">{{ strtoupper($event->name) }}</h1>
             @if($event->description)
-                <p class="event-description">{{ $event->description }}</p>
+                <p class="event-description">{{ strtoupper($event->description) }}</p>
             @endif
         </div>
 
@@ -132,9 +132,9 @@
             @csrf
             @foreach($questions as $question)
                 <div class="question" data-question-id="{{ $question->id }}">
-                    <h3 class="question-title">{{ $question->question_text }}</h3>
+                    <h3 class="question-title">{{ strtoupper($question->question_text) }}</h3>
                     <div class="question-type">
-                        {{ $question->multiple_choice ? 'Multiple choice (select all that apply)' : 'Single choice' }}
+                        {{ $question->multiple_choice ? 'MULTIPLE CHOICE (SELECT ALL THAT APPLY)' : 'SINGLE CHOICE' }}
                     </div>
 
                     @foreach($question->options as $option)
@@ -144,7 +144,7 @@
                                        name="answers[{{ $question->id }}]{{ $question->multiple_choice ? '[]' : '' }}"
                                        value="{{ $option->id }}"
                                        {{ $question->multiple_choice ? '' : 'required' }}>
-                                {{ $option->option_text }}
+                                {{ strtoupper($option->option_text) }}
                             </label>
                         </div>
                     @endforeach
@@ -153,7 +153,7 @@
 
             <input type="hidden" id="session_token" value="{{ $session_token }}">
             <button type="submit" class="submit-btn" id="submit-button">
-                Submit Your Vote
+                SUBMIT YOUR VOTE
             </button>
         </form>
     </div>
@@ -180,7 +180,7 @@
                 hideAlerts();
 
                 submitButton.disabled = true;
-                submitButton.textContent = 'Submitting...';
+                submitButton.textContent = 'SUBMITTING...';
 
                 try {
                     const formData = new FormData(form);

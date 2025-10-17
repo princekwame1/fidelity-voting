@@ -141,9 +141,10 @@
         }
 
         .timer-expired {
-            background: linear-gradient(135deg, rgba(220, 53, 69, 0.7) 0%, rgba(200, 35, 51, 0.7) 100%) !important;
+            background: linear-gradient(135deg, #f27b33 0%, #f5b361 100%) !important;
             animation: shake 0.5s ease;
             border: 3px solid #fff;
+            opacity: 0.9;
         }
 
         .timer-expired .timer-header h3 {
@@ -158,11 +159,11 @@
 
         .timer-expired .time-unit {
             background: rgba(255,255,255,0.95) !important;
-            border: 2px solid #dc3545;
+            border: 2px solid #f27b33;
         }
 
         .timer-expired .time-value {
-            color: #dc3545 !important;
+            color: #f27b33 !important;
             font-weight: 900;
         }
 
@@ -738,25 +739,25 @@
         <!-- Countdown Timer -->
         <div class="timer-container" id="timer-container">
             <div class="timer-header">
-                <h3 style="font-size: 25px" id="timer-status">{{ $event->name }} - Voting Ends In</h3>
-                <p style="font-size: 18px" id="end-time-display">{{ \Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A') }}</p>
+                <h3 style="font-size: 25px" id="timer-status">{{ strtoupper($event->name) }} - VOTING ENDS IN</h3>
+                <p style="font-size: 18px" id="end-time-display">{{ strtoupper(\Carbon\Carbon::parse($event->end_time)->format('F j, Y \a\t g:i A')) }}</p>
             </div>
             <div class="timer-display" id="timer-display">
                 <div class="time-unit">
                     <div class="time-value" id="days">0</div>
-                    <div class="time-label">Days</div>
+                    <div class="time-label">DAYS</div>
                 </div>
                 <div class="time-unit">
                     <div class="time-value" id="hours">0</div>
-                    <div class="time-label">Hours</div>
+                    <div class="time-label">HOURS</div>
                 </div>
                 <div class="time-unit">
                     <div class="time-value" id="minutes">0</div>
-                    <div class="time-label">Minutes</div>
+                    <div class="time-label">MINUTES</div>
                 </div>
                 <div class="time-unit">
                     <div class="time-value" id="seconds">0</div>
-                    <div class="time-label">Seconds</div>
+                    <div class="time-label">SECONDS</div>
                 </div>
             </div>
             <div class="timer-progress">
@@ -778,7 +779,7 @@
 
                 <div class="charts-container" id="charts-container">
                     <!-- Charts will be dynamically inserted here -->
-                    <div class="no-data">No voting data yet. Results will appear here once voting begins.</div>
+                    <div class="no-data">NO VOTING DATA YET. RESULTS WILL APPEAR HERE ONCE VOTING BEGINS.</div>
                 </div>
             </div>
         </div>
@@ -789,7 +790,7 @@
         <div class="rankings-section">
             {{-- <h2 class="rankings-title">Live Rankings</h2> --}}
             <div id="rankings-container">
-                <div class="no-data">No voting data yet. Rankings will appear here once voting begins.</div>
+                <div class="no-data">NO VOTING DATA YET. RANKINGS WILL APPEAR HERE ONCE VOTING BEGINS.</div>
             </div>
         </div>
         @endif
@@ -867,7 +868,7 @@
             const container = document.getElementById('charts-container');
 
             if (!questions || questions.length === 0) {
-                container.innerHTML = '<div class="no-data">No voting data yet. Results will appear here once voting begins.</div>';
+                container.innerHTML = '<div class="no-data">NO VOTING DATA YET. RESULTS WILL APPEAR HERE ONCE VOTING BEGINS.</div>';
                 return;
             }
 
@@ -1042,7 +1043,7 @@
             }
 
             if (!questions || questions.length === 0) {
-                container.innerHTML = '<div class="no-data">No voting data yet. Rankings will appear here once voting begins.</div>';
+                container.innerHTML = '<div class="no-data">NO VOTING DATA YET. RANKINGS WILL APPEAR HERE ONCE VOTING BEGINS.</div>';
                 return;
             }
 
@@ -1077,9 +1078,9 @@
                 table.innerHTML = `
                     <thead>
                         <tr>
-                            <th style="width: 60px;">Rank</th>
-                            <th>Contestant</th>
-                            <th style="width: 80px; text-align: center;">Votes</th>
+                            <th style="width: 60px;">RANK</th>
+                            <th>CONTESTANT</th>
+                            <th style="width: 80px; text-align: center;">VOTES</th>
                             <th style="width: 80px; text-align: center;">%</th>
                         </tr>
                     </thead>
@@ -1198,18 +1199,50 @@
         // Countdown Timer Function
         function updateTimer() {
             const now = new Date().getTime();
-            const distance = eventEndTime - now;
+            const timerContainer = document.getElementById('timer-container');
+            const timerStatus = document.getElementById('timer-status');
+            const endTimeDisplay = document.getElementById('end-time-display');
+
+            // Check if event hasn't started yet
+            if (now < eventStartTime) {
+                // Voting hasn't started - count down to start time
+                const distanceToStart = eventStartTime - now;
+
+                // Calculate time units until start
+                const days = Math.floor(distanceToStart / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distanceToStart % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distanceToStart % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distanceToStart % (1000 * 60)) / 1000);
+
+                // Update display
+                updateTimeUnit('days', days);
+                updateTimeUnit('hours', hours);
+                updateTimeUnit('minutes', minutes);
+                updateTimeUnit('seconds', seconds);
+
+                // Update styling and text for pre-start state
+                timerContainer.style.background = 'linear-gradient(135deg, rgba(242, 123, 51, 0.8) 0%, rgba(245, 179, 97, 0.8) 100%)';
+                timerContainer.classList.remove('timer-warning', 'timer-expired');
+                timerStatus.textContent = '{{ strtoupper($event->name) }} - VOTING STARTS IN';
+                endTimeDisplay.textContent = 'STARTS: {{ strtoupper(\Carbon\Carbon::parse($event->start_time)->format("F j, Y \\a\\t g:i A")) }}';
+
+                // Progress bar at 0% before start
+                document.getElementById('progress-bar').style.width = '0%';
+
+                return;
+            }
+
+            // Event has started - count down to end time
+            const distanceToEnd = eventEndTime - now;
             const totalDuration = eventEndTime - eventStartTime;
             const elapsed = now - eventStartTime;
 
-            const timerContainer = document.getElementById('timer-container');
-            const timerStatus = document.getElementById('timer-status');
-
-            if (distance < 0) {
+            if (distanceToEnd < 0) {
                 // Voting has ended
                 clearInterval(timerInterval);
                 timerContainer.classList.add('timer-expired');
-                timerStatus.textContent = '{{ $event->name }} - Voting Has Ended';
+                timerContainer.classList.remove('timer-warning');
+                timerStatus.textContent = '{{ strtoupper($event->name) }} - VOTING HAS ENDED';
                 document.getElementById('days').textContent = '0';
                 document.getElementById('hours').textContent = '0';
                 document.getElementById('minutes').textContent = '0';
@@ -1221,11 +1254,11 @@
                 return;
             }
 
-            // Calculate time units
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            // Calculate time units until end
+            const days = Math.floor(distanceToEnd / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distanceToEnd % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distanceToEnd % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distanceToEnd % (1000 * 60)) / 1000);
 
             // Update display with animation
             updateTimeUnit('days', days);
@@ -1233,14 +1266,20 @@
             updateTimeUnit('minutes', minutes);
             updateTimeUnit('seconds', seconds);
 
+            // Update styling for active voting
+            timerContainer.style.background = 'linear-gradient(135deg, #f27b33 0%, #f5b361 100%)';
+            timerContainer.style.opacity = '1';  // Reset opacity to full when voting is active
+            timerStatus.textContent = '{{ strtoupper($event->name) }} - VOTING ENDS IN';
+            endTimeDisplay.textContent = 'ENDS: {{ strtoupper(\Carbon\Carbon::parse($event->end_time)->format("F j, Y \\a\\t g:i A")) }}';
+
             // Update progress bar
             const progressPercentage = Math.min(100, (elapsed / totalDuration) * 100);
             document.getElementById('progress-bar').style.width = progressPercentage + '%';
 
             // Add warning class if less than 5 minutes remaining
-            if (distance < 5 * 60 * 1000 && !timerContainer.classList.contains('timer-warning')) {
+            if (distanceToEnd < 5 * 60 * 1000 && !timerContainer.classList.contains('timer-warning')) {
                 timerContainer.classList.add('timer-warning');
-                timerStatus.textContent = '{{ $event->name }} - Voting Ending Soon!';
+                timerStatus.textContent = '{{ strtoupper($event->name) }} - VOTING ENDING SOON!';
             }
         }
 
@@ -1280,44 +1319,8 @@
             }
         }, 100);
 
-        // Check if voting hasn't started yet
-        function checkVotingStatus() {
-            const now = new Date().getTime();
-            const timerContainer = document.getElementById('timer-container');
-            const timerStatus = document.getElementById('timer-status');
-
-            if (now < eventStartTime) {
-                // Voting hasn't started
-                const distance = eventStartTime - now;
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-
-                timerContainer.style.background = 'linear-gradient(135deg, #6c757d 0%, #495057 100%)';
-                timerStatus.textContent = '{{ $event->name }} - Voting Starts In';
-                document.getElementById('end-time-display').textContent =
-                    'Starts: {{ \Carbon\Carbon::parse($event->start_time)->format("F j, Y \\a\\t g:i A") }}';
-
-                return false; // Voting not active
-            }
-            return true; // Voting is active
-        }
-
-        // Initialize voting status check
-        if (!checkVotingStatus()) {
-            // If voting hasn't started, check periodically
-            const statusInterval = setInterval(() => {
-                if (checkVotingStatus()) {
-                    clearInterval(statusInterval);
-                    // Reset timer display for voting end
-                    document.getElementById('timer-status').textContent = '{{ $event->name }} - Voting Ends In';
-                    document.getElementById('end-time-display').textContent =
-                        '{{ \Carbon\Carbon::parse($event->end_time)->format("F j, Y \\a\\t g:i A") }}';
-                    document.getElementById('timer-container').style.background =
-                        'linear-gradient(135deg, #f27b33 0%, #f5b361 100%)';
-                }
-            }, 1000);
-        }
+        // The voting status is now checked directly in updateTimer function
+        // No need for separate checkVotingStatus as it's integrated into the timer update logic
     </script>
 </body>
 </html>

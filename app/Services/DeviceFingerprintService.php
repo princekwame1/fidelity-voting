@@ -41,14 +41,26 @@ class DeviceFingerprintService
 
     public function generateStrictFingerprint(Request $request): string
     {
-        // Simple device fingerprint based on browser headers only
-        // This ensures consistency between page load and form submission
+        // Enhanced device fingerprint with more unique identifiers
+        // Add random component to reduce collisions between similar devices
         $components = [
             'user_agent' => $request->userAgent() ?? '',
             'accept_language' => $request->header('Accept-Language') ?? '',
             'accept_encoding' => $request->header('Accept-Encoding') ?? '',
-            // Don't include JavaScript fingerprint data here as it may not be consistent
+            'accept' => $request->header('Accept') ?? '',
+            'sec_ch_ua' => $request->header('Sec-CH-UA') ?? '',
+            'sec_ch_ua_mobile' => $request->header('Sec-CH-UA-Mobile') ?? '',
+            'sec_ch_ua_platform' => $request->header('Sec-CH-UA-Platform') ?? '',
         ];
+
+        // If we have fingerprint data from JavaScript, use it for better uniqueness
+        if ($request->has('fingerprint_data')) {
+            $fpData = json_decode($request->input('fingerprint_data'), true);
+            if ($fpData && isset($fpData['canvas_hash'])) {
+                $components['canvas_hash'] = $fpData['canvas_hash'] ?? '';
+                $components['screen_resolution'] = ($fpData['screen_width'] ?? '') . 'x' . ($fpData['screen_height'] ?? '');
+            }
+        }
 
         ksort($components);
         return hash('sha256', json_encode($components));
